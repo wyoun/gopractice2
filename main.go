@@ -25,6 +25,7 @@ var done chan bool
 //var done chan bool = make(chan bool)
 
 func main() {
+	//initialize global variables
 	done = make(chan bool)
 	ch = make(chan string)
 	startTime = time.Now().Unix()
@@ -34,10 +35,13 @@ func main() {
 	defer Truncatefile.Close()
 	Truncatefile.Truncate(0)
 
+	//start background process that fetches time from the api every math.E seconds.
 	go getEulerTime()
 
+	//handle http GET requests to root.
 	http.HandleFunc("/", RootHandler)
 	http.ListenAndServe(":12345", nil)
+
 }
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
