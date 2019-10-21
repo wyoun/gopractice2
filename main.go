@@ -63,11 +63,13 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		go func() {
 			f, err := os.OpenFile("logs", os.O_APPEND|os.O_WRONLY, 0600)
 			if err != nil {
+				fmt.Println(err)
 				log.Fatal(err)
 			}
 			defer f.Close()
 			_, err = f.WriteString(str)
 			if err != nil {
+				fmt.Println(err)
 				log.Fatal(err)
 			}
 			done <- true
