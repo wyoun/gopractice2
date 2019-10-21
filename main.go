@@ -18,6 +18,7 @@ type RecordedTime struct {
 
 var count uint32
 var lastTime int64
+var startTime int64
 var ch chan string
 var done chan bool
 
@@ -26,6 +27,7 @@ var done chan bool
 func main() {
 	done = make(chan bool)
 	ch = make(chan string)
+	startTime = time.Now().Unix()
 	go getEulerTime()
 
 	http.HandleFunc("/", RootHandler)
@@ -43,6 +45,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "<p>Client IP: %s</p>", ipaddr)
 		fmt.Fprintf(w, "<p>Last Fetched Time: %d</p>", lastTime)
 		fmt.Fprintf(w, "<p>Request Time: %d</p>", Reqtime)
+		fmt.Fprintf(w, "<p>Start Time: %d</p>", startTime)
 		fmt.Fprintf(w, "<p>Total number of time requests to the api: %d</p>", count)
 
 		str := fmt.Sprintf("%s-%d-%d\n", r.RemoteAddr, Reqtime, lastTime)
