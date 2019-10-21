@@ -84,7 +84,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getEulerTime() {
-
+	var Rectime RecordedTime
 	for {
 		resp, err := http.Get("http://worldtimeapi.org/api/ip")
 		if err != nil {
@@ -98,7 +98,6 @@ func getEulerTime() {
 			log.Fatal(err)
 		}
 		count = count + 1
-		var Rectime RecordedTime
 		err = json.Unmarshal(body, &Rectime)
 		lastTime = Rectime.UTime
 
