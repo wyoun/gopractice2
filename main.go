@@ -28,6 +28,12 @@ func main() {
 	done = make(chan bool)
 	ch = make(chan string)
 	startTime = time.Now().Unix()
+
+	//truncate log.txt for every launch
+	Truncatefile, _ := os.OpenFile("logs", os.O_RDWR, 0666)
+	defer Truncatefile.Close()
+	Truncatefile.Truncate(0)
+
 	go getEulerTime()
 
 	http.HandleFunc("/", RootHandler)
