@@ -34,30 +34,39 @@ func main() {
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
 
-	ipaddr := r.RemoteAddr
-	Reqtime := time.Now().Unix()
+	switch r.Method {
 
-	fmt.Fprintf(w, "<p>Client IP: %s</p>", ipaddr)
-	fmt.Fprintf(w, "<p>Last Fetched Time: %d</p>", lastTime)
-	fmt.Fprintf(w, "<p>Request Time: %d</p>", Reqtime)
-	fmt.Fprintf(w, "<p>Total number of time requests to the api: %d</p>", count)
+	case "GET":
+		ipaddr := r.RemoteAddr
+		Reqtime := time.Now().Unix()
 
-	str := fmt.Sprintf("%s-%d-%d\n", r.RemoteAddr, Reqtime, lastTime)
+		fmt.Fprintf(w, "<p>Client IP: %s</p>", ipaddr)
+		fmt.Fprintf(w, "<p>Last Fetched Time: %d</p>", lastTime)
+		fmt.Fprintf(w, "<p>Request Time: %d</p>", Reqtime)
+		fmt.Fprintf(w, "<p>Total number of time requests to the api: %d</p>", count)
 
-	go func() {
-		f, err := os.OpenFile("logs", os.O_APPEND|os.O_WRONLY, 0600)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		_, err = f.WriteString(str)
-		if err != nil {
-			log.Fatal(err)
-		}
-		done <- true
-	}()
+		str := fmt.Sprintf("%s-%d-%d\n", r.RemoteAddr, Reqtime, lastTime)
 
-	<-done
+		go func() {
+			f, err := os.OpenFile("logs", os.O_APPEND|os.O_WRONLY, 0600)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer f.Close()
+			_, err = f.WriteString(str)
+			if err != nil {
+				log.Fatal(err)
+			}
+			done <- true
+		}()
+
+		<-done
+
+	default:
+		fmt.Fprintf(w, "Request Method is not GET")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 }
 
