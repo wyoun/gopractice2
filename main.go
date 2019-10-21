@@ -47,12 +47,12 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		f, err := os.OpenFile("logs", os.O_APPEND|os.O_WRONLY, 0600)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		defer f.Close()
 		_, err = f.WriteString(str)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		done <- true
 	}()
@@ -67,14 +67,13 @@ func getEulerTime() {
 		resp, err := http.Get("http://worldtimeapi.org/api/ip")
 		if err != nil {
 			fmt.Printf("failed getting time from worldtimeapi.org!")
-			return
+			log.Fatal(err)
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatal(err)
 			fmt.Printf("failed to read response body!")
-			return
+			log.Fatal(err)
 		}
 		count = count + 1
 		var Rectime RecordedTime
